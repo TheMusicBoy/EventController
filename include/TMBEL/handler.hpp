@@ -1,15 +1,18 @@
-#ifndef _TMBEL_EVENT_HANDLER_HPP_
-#define _TMBEL_EVENT_HANDLER_HPP_
+#ifndef _TMBEL_HANDLER_HPP_
+#define _TMBEL_HANDLER_HPP_
 
 #include <functional>
 #include <list>
 #include <mutex>
 #include <vector>
 
-namespace ev {
+namespace el {
 
 class HandlerListBase;
 
+////////////////////////////////////////////////////////////
+/// \brief Base class of all handlers.
+////////////////////////////////////////////////////////////
 class HandlerBase {
  protected:
     using Container = HandlerListBase;
@@ -32,6 +35,10 @@ class HandlerBase {
     virtual void remove();
 };
 
+////////////////////////////////////////////////////////////
+/// \brief Base class of handler container that safe for
+/// multithread work.
+////////////////////////////////////////////////////////////
 class HandlerListBase {
  protected:
     using HandlerList = std::list<HandlerBase*>;
@@ -57,7 +64,152 @@ class HandlerListBase {
     size_t size();
 };
 
+////////////////////////////////////////////////////////////
+/// \brief Base class of handler that receive Data object
+////////////////////////////////////////////////////////////
+template <typename Data>
+class Handler : public HandlerBase {
+ protected:
+    using Self = Handler<Data>;
+    using Base = HandlerBase;
 
-}  // namespace ev
+ public:
+    Handler(Container* container) : Base(container) {}
+    Handler(Container* container, Position position)
+        : Base(container, position) {}
+
+    virtual void call(const Data& data) = 0;
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Class that can contain handlers and call them
+/// save for multithread work.
+////////////////////////////////////////////////////////////
+template <typename Data>
+class HandlerList : public HandlerListBase {
+ protected:
+    using Self = HandlerList<Data>;
+    using Base = HandlerListBase;
+    using El   = Handler<Data>;
+
+ public:
+    HandlerList() = default;
+    HandlerList(HandlerList&& other) : Base(other) {}
+
+    void call(const Data& data) {
+        std::lock_guard lock(lock_);
+        for (auto& el : resource_) static_cast<El*>(el)->call(data);
+    }
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Handler that process and transforms data to
+/// another type by specified operation.
+////////////////////////////////////////////////////////////
+template <typename Data, typename Result>
+class Processor : public Handler<Data> {
+ protected:
+    using Self = ProcessorBase<Data, Result>;
+    using Base = Handler<Data>;
+
+    using Container = typename Base::Container;
+    using Position  = typename Base::Position;
+
+    using Handler    = Handler<Result>;
+    using List       = HandlerList<Data>;
+    using HandlerPos = typename List::iterator;
+    using Process    = std::function<Result(const Data&)>;
+
+    Process process_;
+    List resource_;
+
+ public:
+    ProcessorBase() = default;
+    ProcessorBase(Container* container) : Base(container) {}
+    ProcessorBase(Container* container, Position position)
+        : Base(container, position) {}
+    ProcessorBase(Process process) : process_(process) {}
+
+    void setProcess(Process process) { process_ = process; }
+
+    void call(const Data& data) override {
+        Result result = process_(data);
+        resource_.call(result);
+    }
+
+    HandlerPos push(Handler* object) { return resource_.push(object); }
+
+    HandlerPos insert(HandlerPos position, Handler* object) {
+        return resource_.insert(position, object);
+    }
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Base class of all parsers used to split data for
+/// handlers by some algorithm.
+////////////////////////////////////////////////////////////
+template <typename Data>
+class ParserBase : virtual public Handler<Data> {
+ protected:
+    using Self = ParserBase<Data>;
+    using Base = Handler<Data>;
+
+    using Container = typename Base::Container;
+    using Position  = typename Base::Position;
+
+    using Handler    = Handler<Data>;
+    using List       = HandlerList<Data>;
+    using HandlerPos = typename List::iterator;
+
+    std::vector<List> resource_;
+
+ public:
+    ParserBase() = default;
+    ParserBase(size_t group_count) : resource_(group_count) {}
+
+    void setGroupCount(size_t group) { resource_.resize(group); }
+
+    HandlerPos push(size_t group, Handler* handler) {
+        return resource_[group].push(handler);
+    }
+
+    HandlerPos insert(size_t group, HandlerPos position, Handler* handler) {
+        return resource_[group].insert(position, handler);
+    }
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Handler that can call function that will be set.
+////////////////////////////////////////////////////////////
+template <typename Data>
+class FuncHandler : Handler<Data> {
+ protected:
+    using Self = FuncHandler<Data>;
+    using Base = Handler<Data>;
+
+    using Container = typename Base::Container;
+    using Position  = typename Base::Position;
+
+    using Func = std::function<void(const Data&)>;
+
+    std::recursive_mutex lock_;
+    Func function_;
+
+ public:
+    FuncHandler() = default;
+    FuncHandler(Func function) : function_(function) {}
+
+    void setFunction(Func function) {
+        std::lock_guard lock(lock_);
+        function_ = function;
+    }
+
+    void call(const Data& data) override {
+        std::lock_guard lock(lock_);
+        if (function_) function_(data);
+    }
+};
+
+}  // namespace el
 
 #endif
