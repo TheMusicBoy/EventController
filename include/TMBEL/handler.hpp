@@ -109,13 +109,13 @@ class HandlerList : public HandlerListBase {
 template <typename Data, typename Result>
 class Processor : public Handler<Data> {
  protected:
-    using Self = ProcessorBase<Data, Result>;
+    using Self = Processor<Data, Result>;
     using Base = Handler<Data>;
 
     using Container = typename Base::Container;
     using Position  = typename Base::Position;
 
-    using Handler    = Handler<Result>;
+    using HandlerObj    = Handler<Result>;
     using List       = HandlerList<Data>;
     using HandlerPos = typename List::iterator;
     using Process    = std::function<Result(const Data&)>;
@@ -124,11 +124,11 @@ class Processor : public Handler<Data> {
     List resource_;
 
  public:
-    ProcessorBase() = default;
-    ProcessorBase(Container* container) : Base(container) {}
-    ProcessorBase(Container* container, Position position)
+    Processor() = default;
+    Processor(Container* container) : Base(container) {}
+    Processor(Container* container, Position position)
         : Base(container, position) {}
-    ProcessorBase(Process process) : process_(process) {}
+    Processor(Process process) : process_(process) {}
 
     void setProcess(Process process) { process_ = process; }
 
@@ -137,9 +137,9 @@ class Processor : public Handler<Data> {
         resource_.call(result);
     }
 
-    HandlerPos push(Handler* object) { return resource_.push(object); }
+    HandlerPos push(HandlerObj* object) { return resource_.push(object); }
 
-    HandlerPos insert(HandlerPos position, Handler* object) {
+    HandlerPos insert(HandlerPos position, HandlerObj* object) {
         return resource_.insert(position, object);
     }
 };
@@ -157,7 +157,7 @@ class ParserBase : virtual public Handler<Data> {
     using Container = typename Base::Container;
     using Position  = typename Base::Position;
 
-    using Handler    = Handler<Data>;
+    using HandlerObj    = Handler<Data>;
     using List       = HandlerList<Data>;
     using HandlerPos = typename List::iterator;
 
@@ -169,11 +169,11 @@ class ParserBase : virtual public Handler<Data> {
 
     void setGroupCount(size_t group) { resource_.resize(group); }
 
-    HandlerPos push(size_t group, Handler* handler) {
+    HandlerPos push(size_t group, HandlerObj* handler) {
         return resource_[group].push(handler);
     }
 
-    HandlerPos insert(size_t group, HandlerPos position, Handler* handler) {
+    HandlerPos insert(size_t group, HandlerPos position, HandlerObj* handler) {
         return resource_[group].insert(position, handler);
     }
 };
