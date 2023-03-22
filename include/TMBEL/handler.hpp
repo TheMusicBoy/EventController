@@ -4,6 +4,7 @@
 #include <functional>
 #include <list>
 #include <mutex>
+#include <thread>
 #include <vector>
 
 namespace el {
@@ -115,7 +116,7 @@ class Processor : public Handler<Data> {
     using Container = typename Base::Container;
     using Position  = typename Base::Position;
 
-    using HandlerObj    = Handler<Result>;
+    using HandlerObj = Handler<Result>;
     using List       = HandlerList<Data>;
     using HandlerPos = typename List::iterator;
     using Process    = std::function<Result(const Data&)>;
@@ -157,7 +158,7 @@ class ParserBase : virtual public Handler<Data> {
     using Container = typename Base::Container;
     using Position  = typename Base::Position;
 
-    using HandlerObj    = Handler<Data>;
+    using HandlerObj = Handler<Data>;
     using List       = HandlerList<Data>;
     using HandlerPos = typename List::iterator;
 
@@ -182,9 +183,9 @@ class ParserBase : virtual public Handler<Data> {
 /// \brief Handler that can call function that will be set.
 ////////////////////////////////////////////////////////////
 template <typename Data>
-class FuncHandler : Handler<Data> {
+class SyncFuncHandler : public Handler<Data> {
  protected:
-    using Self = FuncHandler<Data>;
+    using Self = SyncFuncHandler<Data>;
     using Base = Handler<Data>;
 
     using Container = typename Base::Container;
@@ -196,8 +197,8 @@ class FuncHandler : Handler<Data> {
     Func function_;
 
  public:
-    FuncHandler() = default;
-    FuncHandler(Func function) : function_(function) {}
+    SyncFuncHandler() = default;
+    SyncFuncHandler(Func function) : function_(function) {}
 
     void setFunction(Func function) {
         std::lock_guard lock(lock_);
@@ -207,6 +208,45 @@ class FuncHandler : Handler<Data> {
     void call(const Data& data) override {
         std::lock_guard lock(lock_);
         if (function_) function_(data);
+    }
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Handler that can asynchronously call function 
+/// that will be set.
+////////////////////////////////////////////////////////////
+template <typename Data>
+class AsyncFuncHandler : public Handler<Data> {
+ protected:
+    using Self = AsyncFuncHandler<Data>;
+    using Base = Handler<Data>;
+
+    using Container  = typename Base::Container;
+    using Position   = typename Base::Position;
+    using ThreadList = std::list<std::thread>;
+
+    using Func = std::function<void(const Data&)>;
+
+    std::recursive_mutex lock_;
+    Func function_;
+    ThreadList threads_;
+
+ public:
+    AsyncFuncHandler() = default;
+    AsyncFuncHandler(Func function) : function_(function) {}
+    ~AsyncFuncHandler() {
+        std::lock_guard lock(lock_);
+        for (auto& el : threads_) el.join();
+    }
+
+    void setFunction(Func function) {
+        std::lock_guard lock(lock_);
+        function_ = function;
+    }
+
+    void call(const Data& data) override {
+        std::lock_guard lock(lock_);
+        if (function_) threads_.emplace_back(function_);
     }
 };
 
