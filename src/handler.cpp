@@ -1,6 +1,6 @@
 #include <TMBEL/handler.hpp>
 
-namespace el {
+namespace ec {
 
 ////////////////////////////////////////////////////////////
 // HandlerBase implementation
@@ -19,15 +19,15 @@ HandlerBase::HandlerBase(Container* container, Position position)
 
 HandlerBase::~HandlerBase() { detach(); }
 
-void HandlerBase::attach(Container* container) {
+std::list<HandlerBase*>::iterator HandlerBase::attach(Container* container) {
     detach();
     container_ = container;
-    position_  = container_->push(this);
+    return position_  = container_->push(this);
 }
 
-void HandlerBase::attach(Container* container, Position position) {
+std::list<HandlerBase*>::iterator HandlerBase::attach(Container* container, Position position) {
     container_ = container;
-    position_ = container_->insert(position, this);
+    return position_ = container_->insert(position, this);
 }
 
 void HandlerBase::detach() {
@@ -90,4 +90,4 @@ size_t HandlerListBase::size() { return resource_.size(); }
 bool HandlerListBase::empty() { return resource_.empty(); }
 
 
-}  // namespace ev
+}  // namespace ec

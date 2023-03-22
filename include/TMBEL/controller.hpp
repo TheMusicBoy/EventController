@@ -7,7 +7,7 @@
 #include <list>
 #include <mutex>
 
-namespace el {
+namespace ec {
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class of object that used to control event
@@ -35,12 +35,12 @@ class ControllerBase {
         Data data;
 
         while(event_queue_.pollEvent(&data))
-            handler_list_.call(*data);
+            handler_list_.call(data);
     }
 
     virtual void process() = 0;
 };
 
-}  // namespace el
+}  // namespace ec
 
 #endif

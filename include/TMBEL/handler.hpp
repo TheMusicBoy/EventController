@@ -7,7 +7,7 @@
 #include <thread>
 #include <vector>
 
-namespace el {
+namespace ec {
 
 class HandlerListBase;
 
@@ -29,8 +29,8 @@ class HandlerBase {
     HandlerBase(Container* container, Position position);
     ~HandlerBase();
 
-    void attach(Container* container);
-    void attach(Container* container, Position position);
+    Position attach(Container* container);
+    Position attach(Container* container, Position position);
     void detach();
 
     virtual void remove();
@@ -75,6 +75,7 @@ class Handler : public HandlerBase {
     using Base = HandlerBase;
 
  public:
+    Handler() = default;
     Handler(Container* container) : Base(container) {}
     Handler(Container* container, Position position)
         : Base(container, position) {}
@@ -198,7 +199,9 @@ class SyncFuncHandler : public Handler<Data> {
 
  public:
     SyncFuncHandler() = default;
-    SyncFuncHandler(Func function) : function_(function) {}
+    SyncFuncHandler(Func function) : Base() {
+        function_ = function;
+    }
 
     void setFunction(Func function) {
         std::lock_guard lock(lock_);
@@ -233,7 +236,9 @@ class AsyncFuncHandler : public Handler<Data> {
 
  public:
     AsyncFuncHandler() = default;
-    AsyncFuncHandler(Func function) : function_(function) {}
+    AsyncFuncHandler(Func function) : Base() {
+        function_ = function;
+    }
     ~AsyncFuncHandler() {
         std::lock_guard lock(lock_);
         for (auto& el : threads_) el.join();
@@ -246,10 +251,10 @@ class AsyncFuncHandler : public Handler<Data> {
 
     void call(const Data& data) override {
         std::lock_guard lock(lock_);
-        if (function_) threads_.emplace_back(function_);
+        if (function_) threads_.emplace_back(function_, std::ref(data));
     }
 };
 
-}  // namespace el
+}  // namespace ec
 
 #endif

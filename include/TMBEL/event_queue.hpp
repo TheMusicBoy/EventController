@@ -4,7 +4,7 @@
 #include <list>
 #include <mutex>
 
-namespace el {
+namespace ec {
 
 ////////////////////////////////////////////////////////////
 /// \brief Class that contains events and helps to operate
@@ -14,7 +14,7 @@ template <typename Data>
 class EventQueue {
  protected:
     using Self      = EventQueue<Data>;
-    using Container = std::list<const Data&>;
+    using Container = std::list<Data>;
     using Position  = typename Container::iterator;
 
     std::mutex lock_;
@@ -49,7 +49,7 @@ class EventQueue {
         other.lock_.lock();
         this->lock_.lock();
 
-        resource_.splice(resource_.end(), other);
+        resource_.splice(resource_.end(), other.resource_);
 
         this->lock_.unlock();
         other.lock_.unlock();
@@ -66,6 +66,6 @@ class EventQueue {
     }
 };
 
-}  // namespace el
+}  // namespace ec
 
 #endif
