@@ -1,6 +1,6 @@
 #include <TMBEL/utils.hpp>
 
-namespace el
+namespace ec
 {
     
 ////////////////////////////////////////////////////////////
@@ -43,4 +43,4 @@ void UniqueContainer::del(Position position) {
     resource_.erase(position);
 }
 
-} // namespace el
+} // namespace ec

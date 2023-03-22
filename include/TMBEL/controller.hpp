@@ -7,7 +7,7 @@
 #include <list>
 #include <mutex>
 
-namespace el {
+namespace ec {
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class of object that used to control event
@@ -41,6 +41,6 @@ class ControllerBase {
     virtual void process() = 0;
 };
 
-}  // namespace el
+}  // namespace ec
 
 #endif

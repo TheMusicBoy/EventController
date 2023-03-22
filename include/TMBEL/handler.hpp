@@ -7,7 +7,7 @@
 #include <thread>
 #include <vector>
 
-namespace el {
+namespace ec {
 
 class HandlerListBase;
 
@@ -250,6 +250,6 @@ class AsyncFuncHandler : public Handler<Data> {
     }
 };
 
-}  // namespace el
+}  // namespace ec
 
 #endif

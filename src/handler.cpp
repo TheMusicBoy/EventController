@@ -1,6 +1,6 @@
 #include <TMBEL/handler.hpp>
 
-namespace el {
+namespace ec {
 
 ////////////////////////////////////////////////////////////
 // HandlerBase implementation
@@ -90,4 +90,4 @@ size_t HandlerListBase::size() { return resource_.size(); }
 bool HandlerListBase::empty() { return resource_.empty(); }
 
 
-}  // namespace ev
+}  // namespace ec

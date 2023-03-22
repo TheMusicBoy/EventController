@@ -5,7 +5,7 @@
 #include <mutex>
 #include <list>
 
-namespace el {
+namespace ec {
 
 ////////////////////////////////////////////////////////////
 /// \brief Container that can contain handler and deletes it
@@ -55,8 +55,6 @@ std::list<HandlerBase*>::iterator syncHandler(HandlerListBase* container, std::l
     return handler->attach(position, static_cast<HandlerList<Data>*>(container));
 }
 
-
-
-}  // namespace el
+}  // namespace ec
 
 #endif

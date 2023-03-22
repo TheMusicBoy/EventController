@@ -4,7 +4,7 @@
 #include <list>
 #include <mutex>
 
-namespace el {
+namespace ec {
 
 ////////////////////////////////////////////////////////////
 /// \brief Class that contains events and helps to operate
@@ -66,6 +66,6 @@ class EventQueue {
     }
 };
 
-}  // namespace el
+}  // namespace ec
 
 #endif
