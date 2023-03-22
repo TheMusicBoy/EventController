@@ -8,7 +8,8 @@ set(SRC
 # Files
     ${INCROOT}/handler.hpp
     ${SRCROOT}/handler.cpp
-    
+    ${INCROOT}/utils.hpp
+    ${SRCROOT}/utils.cpp
 )
 
 add_library(tmbel ${SRC})
