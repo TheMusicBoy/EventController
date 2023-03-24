@@ -1,0 +1,85 @@
+[33mcommit 1a0dafa1045eac9d1fdb06dbae08480259ccf7fa[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Merge: e70afee 5b32957
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Fri Mar 24 20:10:21 2023 +1000
+
+    v0.1.1 Hotfixes
+
+[33mcommit 5b329577f53f0f12e52b9d73e82c182b4bd3f470[m[33m ([m[1;32min_dev[m[33m)[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Fri Mar 24 18:35:22 2023 +1000
+
+    Fixed bugs:
+     * Bug with event queue
+     * Bug with attachment
+     * Bug with Handler default constructor
+     * Bug with invoker
+
+[33mcommit e70afeeb162409874d6197c1190f7973e4a810a5[m[33m ([m[1;31morigin/in_dev[m[33m)[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Fri Mar 24 18:35:22 2023 +1000
+
+    Fixed event queue bug
+
+[33mcommit 320ffe11591a726b2c42ed0e483766afeaf29753[m
+Merge: 8e9c3c7 8aaffe7
+Author: TheMusicBoy <48849996+TheMusicBoy@users.noreply.github.com>
+Date:   Wed Mar 22 17:43:28 2023 +1000
+
+    v0.1
+    
+    Implemented minimal functionality.
+
+[33mcommit 8aaffe714fd8e94c2ab3c0d4decd65a732ab3689[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Wed Mar 22 17:38:08 2023 +1000
+
+    Corrected some names and another things
+
+[33mcommit a40fd1e554b79900d1fc0f37fedb89485719bf0b[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Wed Mar 22 17:28:19 2023 +1000
+
+    Added controller base
+
+[33mcommit 4a7fa1deb89cc43e2fdad3b9fa9ecc3232eede11[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Wed Mar 22 13:32:37 2023 +1000
+
+    Added usefull utilities
+
+[33mcommit 1a93caedf2457dbf87f70a899f566f51f1f9ee3b[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Wed Mar 22 10:34:58 2023 +1000
+
+    Added synchonously and asynchonously FuncHandlers
+
+[33mcommit 454d690bb9296c0f85a5fba68856a4b956dd036f[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Wed Mar 22 00:29:28 2023 +1000
+
+    Fixed mistakes of previous commit
+
+[33mcommit d4426e173e29f9ca2ee7d00fc8eaa4dfe54b013a[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Tue Mar 21 23:59:25 2023 +1000
+
+    Added template handlers
+
+[33mcommit fb0119574506a0ee43c67df9f0dfd3359c8a998d[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Tue Mar 21 23:30:00 2023 +1000
+
+    Created handler base
+
+[33mcommit 8e9c3c7584b257af605f5fc7eebf6b0b5b6ed26e[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Tue Mar 21 12:28:29 2023 +1000
+
+    Added CMake to project
+
+[33mcommit ba0c57b78b5e311c5312140a12bb5330b7a2c606[m
+Author: TheMusicBoy <TheMusicBoy666@mail.ru>
+Date:   Tue Mar 21 12:00:28 2023 +1000
+
+    Initial commit
