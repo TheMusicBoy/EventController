@@ -35,7 +35,7 @@ class ControllerBase {
         Data data;
 
         while(event_queue_.pollEvent(&data))
-            handler_list_.call(*data);
+            handler_list_.call(data);
     }
 
     virtual void process() = 0;

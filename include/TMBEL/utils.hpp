@@ -34,25 +34,25 @@ class UniqueContainer {
 template<typename Data>
 std::list<HandlerBase*>::iterator asyncHandler(HandlerListBase* container, std::function<void(const Data&)> function) {
     Handler<Data>* handler = new AsyncFuncHandler(function);
-    return handler->attach(static_cast<HandlerList<Data>*>(container));
+    return handler->attach(container);
 }
 
 template<typename Data>
 std::list<HandlerBase*>::iterator asyncHandler(HandlerListBase* container, std::list<HandlerBase*>::iterator position, std::function<void(const Data&)> function) {
     Handler<Data>* handler = new AsyncFuncHandler(function);
-    return handler->attach(position, static_cast<HandlerList<Data>*>(container));
+    return handler->attach(position, container);
 }
 
 template<typename Data>
 std::list<HandlerBase*>::iterator syncHandler(HandlerListBase* container, std::function<void(const Data&)> function) {
     Handler<Data>* handler = new SyncFuncHandler(function);
-    return handler->attach(static_cast<HandlerList<Data>*>(container));
+    return handler->attach(container);
 }
 
 template<typename Data>
 std::list<HandlerBase*>::iterator syncHandler(HandlerListBase* container, std::list<HandlerBase*>::iterator position, std::function<void(const Data&)> function) {
     Handler<Data>* handler = new SyncFuncHandler(function);
-    return handler->attach(position, static_cast<HandlerList<Data>*>(container));
+    return handler->attach(position, container);
 }
 
 }  // namespace ec
