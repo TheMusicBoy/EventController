@@ -27,7 +27,7 @@ class HandlerBase {
     HandlerBase();
     HandlerBase(Container* container);
     HandlerBase(Container* container, Position position);
-    ~HandlerBase();
+    virtual ~HandlerBase();
 
     Position attach(Container* container);
     Position attach(Container* container, Position position);
@@ -52,7 +52,7 @@ class HandlerListBase {
     HandlerListBase();
     HandlerListBase(const HandlerListBase&) = delete;
     HandlerListBase(HandlerListBase&&);
-    ~HandlerListBase();
+    virtual ~HandlerListBase();
 
     HandlerPos push(HandlerBase* handler);
     HandlerPos insert(HandlerPos position, HandlerBase* handler);
@@ -79,6 +79,7 @@ class Handler : public HandlerBase {
     Handler(Container* container) : Base(container) {}
     Handler(Container* container, Position position)
         : Base(container, position) {}
+    virtual ~Handlers() override = default;
 
     virtual void call(const Data& data) = 0;
 };
@@ -98,6 +99,7 @@ class HandlerList : public HandlerListBase {
  public:
     HandlerList() = default;
     HandlerList(HandlerList&& other) : Base(other) {}
+    virtual ~HandlerList() override = default;
 
     void call(const Data& data) {
         std::lock_guard lock(lock_);
@@ -132,6 +134,7 @@ class Processor : public Handler<Data> {
     Processor(Container* container, Position position)
         : Base(container, position) {}
     Processor(Process process) : process_(process) {}
+    virtual ~Processor() override = default;
 
     void setProcess(Process process) { process_ = process; }
 
@@ -169,6 +172,7 @@ class ParserBase : virtual public Handler<Data> {
  public:
     ParserBase() = default;
     ParserBase(size_t group_count) : resource_(group_count) {}
+    virtual ~ParserBase() override = default;
 
     void setGroupCount(size_t group) { resource_.resize(group); }
 
@@ -201,6 +205,7 @@ class SyncFuncHandler : public Handler<Data> {
  public:
     SyncFuncHandler() = default;
     SyncFuncHandler(Func function) : Base() { function_ = function; }
+    virtual ~SyncFuncHandler() override = default;
 
     void setFunction(Func function) {
         std::lock_guard lock(lock_);
@@ -236,7 +241,7 @@ class AsyncFuncHandler : public Handler<Data> {
  public:
     AsyncFuncHandler() = default;
     AsyncFuncHandler(Func function) : Base() { function_ = function; }
-    ~AsyncFuncHandler() {
+    virtual ~AsyncFuncHandler() override {
         std::lock_guard lock(lock_);
         for (auto& el : threads_) el.join();
     }

@@ -17,9 +17,9 @@ namespace ec {
 template <typename Index>
 class GlobalMapBase {
  protected:
-    using Container = std::map<Index, HandlerBase*>;
+    using Container = std::map<Index, HandlerListBase*>;
     using Position = Index;
-    using HandlerPos = std::list<HandlerBase*>::iterator;
+    using HandlerPos = std::list<HandlerListBase*>::iterator;
 
     Container resource_;
     std::recursive_mutex lock_;
@@ -27,19 +27,19 @@ class GlobalMapBase {
     GlobalMapBase() {}
 
  public:
-    HandlerBase* get(Position index) {
+    HandlerListBase* get(Position index) {
         std::lock_guard lock(lock_);
         return resource_.at(index);
     }
 
-    Position push(Position index, HandlerBase* handler) {
+    Position push(Position index, HandlerListBase* handler) {
         std::lock_guard lock(lock_);
         return resource_.insert(std::make_pair(index, handler));
     }
 
-    HandlerBase* pop(Position index) {
+    HandlerListBase* pop(Position index) {
         std::lock_guard lock(lock_);
-        HandlerBase* handler = resource_.at(index);
+        HandlerListBase* handler = resource_.at(index);
         resource_.erase(index);
         return handler;
     }
@@ -48,7 +48,7 @@ class GlobalMapBase {
 
 class GlobalMasBase {
 protected:
-    using Container = std::vector<HandlerBase*>;
+    using Container = std::vector<HandlerListBase*>;
     using Position = size_t;
 
     Container resource_;
@@ -61,19 +61,19 @@ protected:
         resource_.resize(new_count, nullptr);
     }
 
-    HandlerBase* get(Position index) {
+    HandlerListBase* get(Position index) {
         std::lock_guard lock(lock_);
         return resource_.at(index);
     }
 
-    Position push(HandlerBase* handler) {
+    Position push(HandlerListBase* handler) {
         std::lock_guard lock(lock_);
 
         resource_.push_back(handler);
         return resource_.size() - 1;
     }
 
-    Position push(Position index, HandlerBase* handler) {
+    Position push(Position index, HandlerListBase* handler) {
         std::lock_guard lock(lock_);
         if (resource_.at(index) != nullptr)
             throw;
@@ -82,12 +82,12 @@ protected:
         return index;
     }
 
-    HandlerBase* pop(Position index) {
+    HandlerListBase* pop(Position index) {
         std::lock_guard lock(lock_);
         if (resource_.at(index) == nullptr)
             throw;
 
-        HandlerBase* handler = resource_.at(index);
+        HandlerListBase* handler = resource_.at(index);
         resource_.at(index) = nullptr;
         return handler;
     }
@@ -95,7 +95,7 @@ protected:
 
 class GlobalListBase {
  protected:
-    using Container = std::list<HandlerBase*>;
+    using Container = std::list<HandlerListBase*>;
     using Position = typename Container::iterator;
 
     Container resource_;
@@ -104,20 +104,20 @@ class GlobalListBase {
     GlobalListBase() {}
 
  public:
-    HandlerBase* get(Position index) {
+    HandlerListBase* get(Position index) {
         std::lock_guard lock(lock_);
         return *index;
     }
 
-    Position push(Position index, HandlerBase* handler) {
+    Position push(Position index, HandlerListBase* handler) {
         std::lock_guard lock(lock_);
         resource_.push_back(handler);
         return std::prev(resource_.end());
     }
 
-    HandlerBase* pop(Position index) {
+    HandlerListBase* pop(Position index) {
         std::lock_guard lock(lock_);
-        HandlerBase* handler = *index;
+        HandlerListBase* handler = *index;
         resource_.erase(index);
         return handler;
     }
