@@ -12,6 +12,7 @@ set(SRC
     ${SRCROOT}/utils.cpp
     ${INCROOT}/event_queue.hpp
     ${INCROOT}/controller.hpp
+    ${INCROOT}/global_container.hpp
 )
 
 add_library(tmbel ${SRC})
