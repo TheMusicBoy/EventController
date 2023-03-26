@@ -90,9 +90,10 @@ class Handler : public HandlerBase {
 template <typename Data>
 class HandlerList : public HandlerListBase {
  protected:
-    using Self = HandlerList<Data>;
-    using Base = HandlerListBase;
-    using El   = Handler<Data>;
+    using Self       = HandlerList<Data>;
+    using Base       = HandlerListBase;
+    using El         = Handler<Data>;
+    using HandlerPos = typename Base::HandlerPos;
 
  public:
     HandlerList() = default;
@@ -161,7 +162,7 @@ class ParserBase : virtual public Handler<Data> {
 
     using HandlerObj = Handler<Data>;
     using List       = HandlerList<Data>;
-    using HandlerPos = typename List::iterator;
+    using HandlerPos = std::list<HandlerBase*>::iterator;
 
     std::vector<List> resource_;
 
@@ -199,9 +200,7 @@ class SyncFuncHandler : public Handler<Data> {
 
  public:
     SyncFuncHandler() = default;
-    SyncFuncHandler(Func function) : Base() {
-        function_ = function;
-    }
+    SyncFuncHandler(Func function) : Base() { function_ = function; }
 
     void setFunction(Func function) {
         std::lock_guard lock(lock_);
@@ -215,7 +214,7 @@ class SyncFuncHandler : public Handler<Data> {
 };
 
 ////////////////////////////////////////////////////////////
-/// \brief Handler that can asynchronously call function 
+/// \brief Handler that can asynchronously call function
 /// that will be set.
 ////////////////////////////////////////////////////////////
 template <typename Data>
@@ -236,9 +235,7 @@ class AsyncFuncHandler : public Handler<Data> {
 
  public:
     AsyncFuncHandler() = default;
-    AsyncFuncHandler(Func function) : Base() {
-        function_ = function;
-    }
+    AsyncFuncHandler(Func function) : Base() { function_ = function; }
     ~AsyncFuncHandler() {
         std::lock_guard lock(lock_);
         for (auto& el : threads_) el.join();
