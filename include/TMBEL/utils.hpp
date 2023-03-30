@@ -28,7 +28,7 @@ class SingletonList {
 
  public:
     ~SingletonList();
-    
+
     static inline SingletonList* getInstance();
 
     Position add(SingletonBase* object);
@@ -39,18 +39,19 @@ void clearResource();
 
 class SingletonBase {
  private:
-    using Position  = std::list<SingletonBase*>::iterator;
+    using Position = std::list<SingletonBase*>::iterator;
 
     Position position_;
 
  public:
     SingletonBase();
+    virtual ~SingletonBase();
 
     void detachSingleton();
 };
 
 template <class Class>
-class Singleton {
+class Singleton : protected SingletonBase {
  private:
     using Self = Singleton<Class>;
 
@@ -58,6 +59,7 @@ class Singleton {
 
  protected:
     Singleton() = default;
+    ~Singleton() override { delete instance_; }
 
  public:
     static inline Class* getInstance() {

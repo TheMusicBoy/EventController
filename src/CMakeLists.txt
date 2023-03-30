@@ -8,6 +8,8 @@ set(SRC
 # Files
     ${INCROOT}/multithread_list.hpp
     ${SRCROOT}/multithread_list.cpp
+    ${INCROOT}/lock_handler.hpp
+    ${SRCROOT}/lock_handler.cpp
     ${INCROOT}/handler.hpp
     ${SRCROOT}/handler.cpp
     ${INCROOT}/utils.hpp
