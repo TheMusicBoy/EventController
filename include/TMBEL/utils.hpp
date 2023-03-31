@@ -40,104 +40,32 @@ class UniqueContainer {
 
 template <typename Data>
 std::list<HandlerBase*>::iterator asyncHandler(
-    HandlerListBase* container, std::function<void(const Data&)> function) {
+    ObsObjectBase<Handler<Data>>* container, std::function<void(const Data&)> function) {
     Handler<Data>* handler = new AsyncFuncHandler(function);
-    return handler->attach(container);
+    return handler->attachTo(container);
 }
 
 template <typename Data>
 std::list<HandlerBase*>::iterator asyncHandler(
-    HandlerListBase* container, std::list<HandlerBase*>::iterator position,
+    ObsObjectBase<Handler<Data>>* container, std::list<HandlerBase*>::iterator position,
     std::function<void(const Data&)> function) {
     Handler<Data>* handler = new AsyncFuncHandler(function);
-    return handler->attach(position, container);
+    return handler->attachTo(position, container);
 }
 
 template <typename Data>
 std::list<HandlerBase*>::iterator syncHandler(
-    HandlerListBase* container, std::function<void(const Data&)> function) {
+    ObsObjectBase<Handler<Data>>* container, std::function<void(const Data&)> function) {
     Handler<Data>* handler = new SyncFuncHandler(function);
-    return handler->attach(container);
+    return handler->attachTo(container);
 }
 
 template <typename Data>
 std::list<HandlerBase*>::iterator syncHandler(
-    HandlerListBase* container, std::list<HandlerBase*>::iterator position,
+    ObsObjectBase<Handler<Data>>* container, std::list<HandlerBase*>::iterator position,
     std::function<void(const Data&)> function) {
     Handler<Data>* handler = new SyncFuncHandler(function);
-    return handler->attach(position, container);
-}
-
-////////////////////////////////////////////////////////////
-// Parsers
-////////////////////////////////////////////////////////////
-
-template <typename Data>
-std::list<HandlerBase*>::iterator asyncHandler(
-    HandlerBase* container, std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new AsyncFuncHandler(function);
-    return static_cast<ParserBase<Data>*>(container)->push(0, handler);
-}
-
-template <typename Data>
-std::list<HandlerBase*>::iterator asyncHandler(
-    HandlerBase* container, std::list<HandlerBase*>::iterator position,
-    std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new AsyncFuncHandler(function);
-    return static_cast<ParserBase<Data>*>(container)->push(0, position,
-                                                           handler);
-}
-
-template <typename Data>
-std::list<HandlerBase*>::iterator syncHandler(
-    HandlerBase* container, std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new SyncFuncHandler(function);
-    return static_cast<ParserBase<Data>*>(container)->push(0, handler);
-}
-
-template <typename Data>
-std::list<HandlerBase*>::iterator syncHandler(
-    HandlerBase* container, std::list<HandlerBase*>::iterator position,
-    std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new SyncFuncHandler(function);
-    return static_cast<ParserBase<Data>*>(container)->push(0, position,
-                                                           handler);
-}
-
-template <typename Data>
-std::list<HandlerBase*>::iterator asyncHandler(
-    HandlerBase* container, size_t group,
-    std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new AsyncFuncHandler(function);
-    return static_cast<ParserBase<Data>*>(container)->push(group, handler);
-}
-
-template <typename Data>
-std::list<HandlerBase*>::iterator asyncHandler(
-    HandlerBase* container, size_t group,
-    std::list<HandlerBase*>::iterator position,
-    std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new AsyncFuncHandler(function);
-    return static_cast<ParserBase<Data>*>(container)->push(group, position,
-                                                           handler);
-}
-
-template <typename Data>
-std::list<HandlerBase*>::iterator syncHandler(
-    HandlerBase* container, size_t group,
-    std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new SyncFuncHandler(function);
-    return static_cast<ParserBase<Data>*>(container)->push(group, handler);
-}
-
-template <typename Data>
-std::list<HandlerBase*>::iterator syncHandler(
-    HandlerBase* container, size_t group,
-    std::list<HandlerBase*>::iterator position,
-    std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new SyncFuncHandler(function);
-    return static_cast<ParserBase<Data>*>(container)->push(group, position,
-                                                           handler);
+    return handler->attachTo(position, container);
 }
 
 }  // namespace ec
