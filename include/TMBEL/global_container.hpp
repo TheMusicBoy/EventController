@@ -14,12 +14,15 @@ namespace ec {
 /// global access.
 ////////////////////////////////////////////////////////////
 
-template <typename Index>
+template <typename Index, typename Data>
 class GlobalMapBase {
  protected:
-    using Container = std::map<Index, HandlerListBase*>;
-    using Position = Index;
-    using HandlerPos = std::list<HandlerListBase*>::iterator;
+    using Object       = Handler<Data>;
+    using ObjContainer = ObsObjectBase<Object>;
+    using Container    = std::map<Index, ObjContainer*>;
+    using Position     = Index;
+
+    using HandlerPos = typename ObjContainer::Position;
 
     Container resource_;
     std::recursive_mutex lock_;
@@ -27,29 +30,33 @@ class GlobalMapBase {
     GlobalMapBase() {}
 
  public:
-    HandlerListBase* get(Position index) {
+    ObjContainer* get(Position index) {
         std::lock_guard lock(lock_);
         return resource_.at(index);
     }
 
-    Position push(Position index, HandlerListBase* handler) {
+    Position push(Position index, ObjContainer* handler) {
         std::lock_guard lock(lock_);
         return resource_.insert(std::make_pair(index, handler));
     }
 
-    HandlerListBase* pop(Position index) {
+    ObjContainer* pop(Position index) {
         std::lock_guard lock(lock_);
-        HandlerListBase* handler = resource_.at(index);
+        ObjContainer* handler = resource_.at(index);
         resource_.erase(index);
         return handler;
     }
-
 };
 
+template <typename Data>
 class GlobalMasBase {
-protected:
-    using Container = std::vector<HandlerListBase*>;
-    using Position = size_t;
+ protected:
+    using Object       = Handler<Data>;
+    using ObjContainer = ObsObjectBase<Object>;
+    using Container    = std::vector<ObjContainer*>;
+    using Position     = size_t;
+
+    using HandlerPos = typename ObjContainer::Position;
 
     Container resource_;
     std::recursive_mutex lock_;
@@ -57,46 +64,47 @@ protected:
     GlobalMasBase() : resource_(0, nullptr) {}
 
  public:
-    void setCount(Position new_count) {
-        resource_.resize(new_count, nullptr);
-    }
+    void setCount(Position new_count) { resource_.resize(new_count, nullptr); }
 
-    HandlerListBase* get(Position index) {
+    ObjContainer* get(Position index) {
         std::lock_guard lock(lock_);
         return resource_.at(index);
     }
 
-    Position push(HandlerListBase* handler) {
+    Position push(ObjContainer* handler) {
         std::lock_guard lock(lock_);
 
         resource_.push_back(handler);
         return resource_.size() - 1;
     }
 
-    Position push(Position index, HandlerListBase* handler) {
+    Position push(Position index, ObjContainer* handler) {
         std::lock_guard lock(lock_);
-        if (resource_.at(index) != nullptr)
-            throw;
-        
+        if (resource_.at(index) != nullptr) throw;
+
         resource_.at(index) = handler;
         return index;
     }
 
-    HandlerListBase* pop(Position index) {
+    ObjContainer* pop(Position index) {
         std::lock_guard lock(lock_);
-        if (resource_.at(index) == nullptr)
-            throw;
+        if (resource_.at(index) == nullptr) throw;
 
-        HandlerListBase* handler = resource_.at(index);
-        resource_.at(index) = nullptr;
+        ObjContainer* handler = resource_.at(index);
+        resource_.at(index)   = nullptr;
         return handler;
     }
 };
 
+template <typename Data>
 class GlobalListBase {
  protected:
-    using Container = std::list<HandlerListBase*>;
-    using Position = typename Container::iterator;
+    using Object       = Handler<Data>;
+    using ObjContainer = ObsObjectBase<Object>;
+    using Container    = std::list<ObjContainer*>;
+    using Position     = typename Container::iterator;
+
+    using HandlerPos = typename ObjContainer::Position;
 
     Container resource_;
     std::recursive_mutex lock_;
@@ -104,20 +112,20 @@ class GlobalListBase {
     GlobalListBase() {}
 
  public:
-    HandlerListBase* get(Position index) {
+    ObjContainer* get(Position index) {
         std::lock_guard lock(lock_);
         return *index;
     }
 
-    Position push(Position index, HandlerListBase* handler) {
+    Position push(Position index, ObjContainer* handler) {
         std::lock_guard lock(lock_);
         resource_.push_back(handler);
         return std::prev(resource_.end());
     }
 
-    HandlerListBase* pop(Position index) {
+    ObjContainer* pop(Position index) {
         std::lock_guard lock(lock_);
-        HandlerListBase* handler = *index;
+        ObjContainer* handler = *index;
         resource_.erase(index);
         return handler;
     }
