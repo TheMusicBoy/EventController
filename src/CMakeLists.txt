@@ -6,6 +6,8 @@ set(SRC
     ${PROJECT_SOURCE_DIR}/include/TMBEL.hpp
 
 # Files
+    ${INCROOT}/singleton.hpp
+    ${SRCROOT}/singleton.cpp
     ${INCROOT}/multithread_list.hpp
     ${SRCROOT}/multithread_list.cpp
     ${INCROOT}/lock_handler.hpp
