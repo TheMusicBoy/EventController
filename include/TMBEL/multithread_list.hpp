@@ -140,7 +140,7 @@ class MtListBase {
         return resource_.empty();
     }
 
-    void map(std::function<Ty> func) {
+    void map(std::function<void(Ty)> func) {
         std::lock_guard lock(lock_);
         for (auto& el : resource_) func(el);
     }
@@ -213,7 +213,7 @@ class ObsObjectBase {
     ObsObjectBase()  = default;
     virtual ~ObsObjectBase() = default;
 
-    inline void map(std::function<SubType> func) {
+    inline void map(std::function<void(SubType)> func) {
         sub_list_.map(func);
     }
 
