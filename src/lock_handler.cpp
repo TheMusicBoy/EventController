@@ -23,27 +23,52 @@ void MutexObjectBase::decrease() {
 // Mutex
 ////////////////////////////////////////////////////////////
 
-Mutex::Mutex(MutexObjectBase* pointer) : reference_(pointer) {
-    reference_->increase();
+void Mutex::decrease_() {
+    if (reference_ != nullptr)
+        ;
+    reference_->decrease();
 }
 
-Mutex::Mutex(const Mutex& other) : reference_(other.reference_) {
-    reference_->increase();
+void Mutex::increase_() {
+    if (reference_ != nullptr) reference_->increase();
 }
+
+Mutex::Mutex() : reference_(nullptr) {}
+
+Mutex::Mutex(MutexObjectBase* pointer) : reference_(pointer) { increase_(); }
+
+Mutex::Mutex(const Mutex& other) : reference_(other.reference_) { increase_(); }
 
 Mutex::Mutex(Mutex&& other) : reference_(other.reference_) {
     other.reference_ = nullptr;
 }
-Mutex::~Mutex() {
-    reference_->decrease();
+
+Mutex::~Mutex() { decrease_(); }
+
+Mutex& Mutex::operator=(const Mutex& other) {
+    if (this != &other) {
+        decrease_();
+        reference_ = other.reference_;
+        increase_();
+    }
+    return *this;
+}
+
+Mutex& Mutex::operator=(Mutex&& other) {
+    if (this != &other) {
+        decrease_();
+        reference_ = other.reference_;
+        other.reference_ = nullptr;
+    }
+    return *this;
 }
 
 void Mutex::lock() {
-    reference_->get().lock();
+    if (reference_ != nullptr) reference_->get().lock();
 }
 
 void Mutex::unlock() {
-    reference_->get().unlock();
+    if (reference_ != nullptr) reference_->get().unlock();
 }
 
 ////////////////////////////////////////////////////////////
@@ -54,9 +79,7 @@ MutexObject::MutexObject() = default;
 
 MutexObject::~MutexObject() = default;
 
-Mutex MutexObject::createRef() {
-    return Mutex(this);
-}
+Mutex MutexObject::createRef() { return Mutex(this); }
 
 ////////////////////////////////////////////////////////////
 // MutexList implementation
@@ -66,9 +89,8 @@ MutexList::MutexList() = default;
 
 Mutex MutexList::getMutex() {
     auto new_mutex = new MutexObject();
-    resource_.push_back(new_mutex);
+    sub_list_.push_back(new_mutex);
     return new_mutex->createRef();
 }
-
 
 }  // namespace ec

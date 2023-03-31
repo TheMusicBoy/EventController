@@ -4,6 +4,7 @@
 #include <functional>
 #include <list>
 #include <mutex>
+#include <type_traits>
 
 namespace ec {
 
@@ -139,6 +140,11 @@ class MtListBase {
         return resource_.empty();
     }
 
+    void map(std::function<Ty> func) {
+        std::lock_guard lock(lock_);
+        for (auto& el : resource_) func(el);
+    }
+
     void map(std::function<void(Ty&)> func) {
         std::lock_guard lock(lock_);
         for (auto& el : resource_) func(el);
@@ -150,11 +156,12 @@ class MtListBase {
     }
 };
 
+template <typename SubType>
 class SubObjectBase {
  protected:
     using Self = SubObjectBase;
 
-    using Container = MtListBase<SubObjectBase*>;
+    using Container = MtListBase<SubType*>;
 
  public:
     using Position = typename Container::Position;
@@ -164,34 +171,55 @@ class SubObjectBase {
     Container* container_;
 
  public:
-    SubObjectBase();
-    SubObjectBase(Container* container);
-    SubObjectBase(Position position, Container* container);
-    ~SubObjectBase();
+    SubObjectBase() : container_(nullptr) {}
+    SubObjectBase(Container* container) { attachTo(container); }
+    SubObjectBase(Position position, Container* container) {
+        attachTo(position, container);
+    }
+    virtual ~SubObjectBase() { detach(); }
 
-    Position attach(Container* container);
-    Position attach(Position position, Container* container);
-    void detach();
+    Position attachTo(Container* container) {
+        detach();
+        container_       = container;
+        return position_ = container_->push_back(static_cast<SubType*>(this));
+    }
+    Position attachTo(Position position, Container* container) {
+        detach();
+        container_       = container;
+        return position_ = container_->insert(position, static_cast<SubType*>(this));
+    }
+    void detach() {
+        if (container_ != nullptr) {
+            container_->erase(position_);
+            container_ = nullptr;
+        }
+    }
 
-    bool isAttached() const;
+    bool isAttached() const { return container_ != nullptr; }
 };
 
+template <
+    typename SubType>
 class ObsObjectBase {
  protected:
-    using Container = MtListBase<SubObjectBase*>;
-    using Object    = SubObjectBase;
+    using Container = MtListBase<SubType*>;
+    using Object    = SubType;
 
-    Container resource_;
+    Container sub_list_;
 
  public:
     using Position = typename Container::Position;
 
-    ObsObjectBase();
-    ~ObsObjectBase();
+    ObsObjectBase()  = default;
+    virtual ~ObsObjectBase() = default;
 
-    Position attach(Object* object);
-    Position attach(Position position, Object* object);
+    inline Position attach(Object* object) {
+        return object->attachTo(&sub_list_);
+    }
 
+    inline Position attach(Position position, Object* object) {
+        return object->attachTo(position, &sub_list_);
+    }
 };
 
 }  // namespace ec

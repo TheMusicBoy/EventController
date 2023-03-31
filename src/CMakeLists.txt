@@ -12,6 +12,8 @@ set(SRC
     ${SRCROOT}/multithread_list.cpp
     ${INCROOT}/lock_handler.hpp
     ${SRCROOT}/lock_handler.cpp
+    ${INCROOT}/process_list.hpp
+    ${SRCROOT}/process_list.cpp
     ${INCROOT}/handler.hpp
     ${SRCROOT}/handler.cpp
     ${INCROOT}/utils.hpp

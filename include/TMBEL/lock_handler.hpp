@@ -2,7 +2,7 @@
 #define _TMBEL_LOCK_HANDLER_HPP_
 
 #include <TMBEL/multithread_list.hpp>
-#include <TMBEL/utils.hpp>
+#include <TMBEL/singleton.hpp>
 #include <mutex>
 
 namespace ec {
@@ -26,18 +26,25 @@ class Mutex {
  protected:
     MutexObjectBase* reference_;
 
+    void decrease_();
+    void increase_();
+
  public:
+    Mutex();
     Mutex(MutexObjectBase* pointer);
     Mutex(const Mutex& other);
     Mutex(Mutex&& other);
     ~Mutex();
+
+    Mutex& operator=(const Mutex& other);
+    Mutex& operator=(Mutex&& other);
 
     void lock();
     void unlock();
 
 };
 
-class MutexObject : protected MutexObjectBase, public SubObjectBase {
+class MutexObject : protected MutexObjectBase, public SubObjectBase<MutexObject> {
  protected:
     using Self = MutexObject;
     using Base = MutexObjectBase;
@@ -49,10 +56,10 @@ class MutexObject : protected MutexObjectBase, public SubObjectBase {
     Mutex createRef();
 };
 
-class MutexList : protected ObsObjectBase, public Singleton<MutexList> {
+class MutexList : protected ObsObjectBase<MutexObject>, public Singleton<MutexList> {
  protected:
     using Self     = MutexList;
-    using Base     = ObsObjectBase;
+    using Base     = ObsObjectBase<MutexObject>;
     using Position = typename Base::Position;
 
     MutexList();
