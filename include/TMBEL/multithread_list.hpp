@@ -213,6 +213,18 @@ class ObsObjectBase {
     ObsObjectBase()  = default;
     virtual ~ObsObjectBase() = default;
 
+    inline void map(std::function<SubType> func) {
+        sub_list_.map(func);
+    }
+
+    inline void map(std::function<void(SubType&)> func) {
+        sub_list_.map(func);
+    }
+
+    inline void map(std::function<void(const SubType&)> func) const {
+        sub_list_.map(func);
+    }
+
     inline Position attach(Object* object) {
         return object->attachTo(&sub_list_);
     }
