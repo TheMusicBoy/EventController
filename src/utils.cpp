@@ -16,7 +16,7 @@ UniqueContainer::~UniqueContainer() {
     for (auto el : resource_) delete el;
 }
 
-inline UniqueContainer::Position UniqueContainer::push(
+UniqueContainer::Position UniqueContainer::push(
     HandlerBase* handler) {
     return Base::push_back(handler);
 }
