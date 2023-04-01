@@ -18,7 +18,7 @@ template <typename Index, typename Data>
 class GlobalMapBase {
  protected:
     using Object       = Handler<Data>;
-    using ObjContainer = ObsObjectBase<Object>;
+    using ObjContainer = HandlerList<Data>;
     using Container    = std::map<Index, ObjContainer*>;
     using Position     = Index;
 
@@ -27,9 +27,10 @@ class GlobalMapBase {
     Container resource_;
     std::recursive_mutex lock_;
 
-    GlobalMapBase() {}
 
  public:
+    GlobalMapBase() = default;
+
     ObjContainer* get(Position index) {
         std::lock_guard lock(lock_);
         return resource_.at(index);
@@ -51,19 +52,21 @@ class GlobalMapBase {
 template <typename Data>
 class GlobalMasBase {
  protected:
+
     using Object       = Handler<Data>;
-    using ObjContainer = ObsObjectBase<Object>;
+    using ObjContainer = HandlerList<Data>;
     using Container    = std::vector<ObjContainer*>;
-    using Position     = size_t;
+    using Position     = uint32_t;
 
     using HandlerPos = typename ObjContainer::Position;
 
     Container resource_;
     std::recursive_mutex lock_;
 
-    GlobalMasBase() : resource_(0, nullptr) {}
 
  public:
+    GlobalMasBase() : resource_(0, nullptr) {}
+
     void setCount(Position new_count) { resource_.resize(new_count, nullptr); }
 
     ObjContainer* get(Position index) {
@@ -100,7 +103,7 @@ template <typename Data>
 class GlobalListBase {
  protected:
     using Object       = Handler<Data>;
-    using ObjContainer = ObsObjectBase<Object>;
+    using ObjContainer = HandlerList<Data>;
     using Container    = std::list<ObjContainer*>;
     using Position     = typename Container::iterator;
 
@@ -109,9 +112,10 @@ class GlobalListBase {
     Container resource_;
     std::recursive_mutex lock_;
 
-    GlobalListBase() {}
 
  public:
+    GlobalListBase() = default;
+
     ObjContainer* get(Position index) {
         std::lock_guard lock(lock_);
         return *index;

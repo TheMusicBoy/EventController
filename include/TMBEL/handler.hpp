@@ -15,17 +15,9 @@ namespace ec {
 ////////////////////////////////////////////////////////////
 /// \brief Base class of all handlers.
 ////////////////////////////////////////////////////////////
-class HandlerBase : public SubObjectBase<HandlerBase> {
- private:
-    using Self = HandlerBase;
-    using Base = SubObjectBase<Self>;
-
+class HandlerBase {
  public:
-    HandlerBase();
-    HandlerBase(Container* container);
-    HandlerBase(Position position, Container* container);
-    virtual ~HandlerBase() = default;
-
+    virtual ~HandlerBase();
     virtual void onRemove();
 };
 
@@ -33,10 +25,13 @@ class HandlerBase : public SubObjectBase<HandlerBase> {
 /// \brief Base class of handler that receive Data object
 ////////////////////////////////////////////////////////////
 template <typename Data>
-class Handler : public HandlerBase {
+class Handler : public HandlerBase, public SubObjectBase<Handler<Data>> {
  protected:
     using Self = Handler<Data>;
-    using Base = HandlerBase;
+    using Base = SubObjectBase<Handler<Data>>;
+
+    using Container = typename Base::Container;
+    using Position  = typename Base::Position;
 
  public:
     Handler() = default;
@@ -46,6 +41,21 @@ class Handler : public HandlerBase {
     virtual ~Handler() override = default;
 
     virtual void call(const Data& data) = 0;
+};
+
+template <typename Data>
+class HandlerList : public ObsObjectBase<Handler<Data>> {
+ protected:
+    using Self = HandlerList<Data>;
+    using Base = ObsObjectBase<Handler<Data>>;
+
+ public:
+    HandlerList();
+    virtual ~HandlerList() override;
+
+    inline void call(const Data& data) {
+        this->map([&data](Handler<Data>* el) { el->call(data); });
+    }
 };
 
 ////////////////////////////////////////////////////////////
@@ -58,17 +68,17 @@ class Processor : public ObsObjectBase<Handler<Result>>,
  protected:
     using Self    = Processor<Data, Result>;
     using SubBase = Handler<Data>;
-    using ObsBase = ObsObjectBase<Handler<Result>>;
+    using ObsBase = HandlerList<Result>;
 
     using Sub     = Handler<Result>;
     using Process = std::function<Result(const Data&)>;
 
     Process process_;
 
-private:
+ private:
     using Container = typename SubBase::Container;
-    using Position = typename SubBase::Position;
-    
+    using Position  = typename SubBase::Position;
+
     using ObsBase::sub_list_;
 
  public:
@@ -83,7 +93,7 @@ private:
 
     void call(const Data& data) override {
         Result result = process_(data);
-        sub_list_.map([result](Sub* handler) { handler->call(result); });
+        sub_list_.call(data);
     }
 };
 
@@ -98,7 +108,7 @@ class ParserBase : virtual public Handler<Data> {
     using Base = Handler<Data>;
 
     using Object = Handler<Data>;
-    using List   = ObsObjectBase<Object>;
+    using List   = HandlerList<Data>;
 
     std::vector<List> resource_;
 
@@ -130,13 +140,13 @@ class FuncHandlerBase : public Handler<Data> {
     using Base = Handler<Data>;
 
  protected:
-    using Func = Handler<Data>;
+    using Func = std::function<void(const Data&)>;
 
     Func function_;
     mutable std::recursive_mutex lock_;
 
  public:
-    FuncHandlerBase() { clearMutex(); }
+    FuncHandlerBase() {}
     FuncHandlerBase(Func&& function) : Self() {
         setFunction(std::move(function));
     }
@@ -228,7 +238,8 @@ class AsyncFuncHandler : public Handler<Data> {
 
     void call(const Data& data) override {
         std::lock_guard lock(lock_);
-        if (Base::function_) process_list_.exec(Base::function_, std::ref(data));
+        if (Base::function_)
+            process_list_.exec(Base::function_, std::ref(data));
     }
 };
 
