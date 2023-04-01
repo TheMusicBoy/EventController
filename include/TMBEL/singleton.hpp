@@ -51,7 +51,7 @@ class Singleton : protected SingletonBase {
 
  protected:
     Singleton() = default;
-    ~Singleton() override { delete instance_; }
+    virtual ~Singleton() override = default;
 
  public:
     static inline Class* getInstance() {
