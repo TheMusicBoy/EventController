@@ -50,8 +50,8 @@ class HandlerList : public ObsObjectBase<Handler<Data>> {
     using Base = ObsObjectBase<Handler<Data>>;
 
  public:
-    HandlerList();
-    virtual ~HandlerList() override;
+    HandlerList() = default;
+    virtual ~HandlerList() override = default;
 
     inline void call(const Data& data) {
         this->map([&data](Handler<Data>* el) { el->call(data); });
