@@ -140,11 +140,6 @@ class MtListBase {
         return resource_.empty();
     }
 
-    void map(std::function<void(Ty)> func) {
-        std::lock_guard lock(lock_);
-        for (auto& el : resource_) func(el);
-    }
-
     void map(std::function<void(Ty&)> func) {
         std::lock_guard lock(lock_);
         for (auto& el : resource_) func(el);
@@ -185,8 +180,9 @@ class SubObjectBase {
     }
     Position attachTo(Position position, Container* container) {
         detach();
-        container_       = container;
-        return position_ = container_->insert(position, static_cast<SubType*>(this));
+        container_ = container;
+        return position_ =
+                   container_->insert(position, static_cast<SubType*>(this));
     }
     void detach() {
         if (container_ != nullptr) {
@@ -198,10 +194,12 @@ class SubObjectBase {
     bool isAttached() const { return container_ != nullptr; }
 };
 
-template <
-    typename SubType>
+template <typename SubType>
 class ObsObjectBase {
  protected:
+    static_assert(std::is_base_of<SubObjectBase<SubType>, SubType>::value,
+                  "Subscriber object must be inherited by ec::SubObjectBase.");
+
     using Container = MtListBase<SubType*>;
     using Object    = SubType;
 
@@ -210,18 +208,12 @@ class ObsObjectBase {
  public:
     using Position = typename Container::Position;
 
-    ObsObjectBase()  = default;
+    ObsObjectBase()          = default;
     virtual ~ObsObjectBase() = default;
 
-    inline void map(std::function<void(SubType)> func) {
-        sub_list_.map(func);
-    }
+    inline void map(std::function<void(SubType*)> func) { sub_list_.map(func); }
 
-    inline void map(std::function<void(SubType&)> func) {
-        sub_list_.map(func);
-    }
-
-    inline void map(std::function<void(const SubType&)> func) const {
+    inline void map(std::function<void(const SubType*)> func) const {
         sub_list_.map(func);
     }
 

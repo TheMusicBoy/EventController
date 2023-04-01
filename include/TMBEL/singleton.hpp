@@ -25,9 +25,6 @@ class SingletonList : public MtListBase<SingletonBase*> {
     ~SingletonList();
 
     static inline SingletonList* getInstance();
-
-    Position add(SingletonBase* object);
-    void remove(Position position);
 };
 
 void clearResource();

@@ -2,45 +2,35 @@
 
 namespace ec {
 
-
-
 ////////////////////////////////////////////////////////////
 // UniqueContainer implementation
 ////////////////////////////////////////////////////////////
 
-UniqueContainer::UniqueContainer(UniqueContainer&& other) {
-    other.lock_.lock();
-    this->lock_.lock();
+UniqueContainer::UniqueContainer() = default;
 
-    resource_ = std::move(other.resource_);
-
-    this->lock_.unlock();
-    other.lock_.unlock();
-}
+UniqueContainer::UniqueContainer(UniqueContainer&& other)
+    : Base(std::move(other)) {}
 
 UniqueContainer::~UniqueContainer() {
-    std::lock_guard lock(lock_);
+    std::lock_guard lock(Base::lock_);
     for (auto el : resource_) delete el;
-    resource_.clear();
 }
 
-std::list<HandlerBase*>::iterator UniqueContainer::push(HandlerBase* handler) {
-    std::lock_guard lock(lock_);
-    resource_.push_back(handler);
-    return std::prev(resource_.end());
+UniqueContainer::Position UniqueContainer::push(
+    HandlerBase* handler) {
+    return Base::push_back(handler);
 }
 
 HandlerBase* UniqueContainer::pop(Position position) {
-    std::lock_guard lock(lock_);
-    HandlerBase* result = *position;
-    resource_.erase(position);
-    return result;
+    HandlerBase* pointer = *position;
+    Base::erase(position);
+    return pointer;
 }
 
 void UniqueContainer::del(Position position) {
-    std::lock_guard lock(lock_);
+    std::lock_guard lock(Base::lock_);
     delete *position;
-    resource_.erase(position);
+    Base::erase(position);
 }
 
 }  // namespace ec

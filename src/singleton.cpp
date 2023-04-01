@@ -2,6 +2,7 @@
 
 namespace ec {
 
+
 ////////////////////////////////////////////////////////////
 // Singleton implementation
 ////////////////////////////////////////////////////////////
@@ -22,6 +23,8 @@ void clearResource() { delete SingletonList::getInstance(); }
 SingletonBase::SingletonBase() {
     position_ = SingletonList::getInstance()->push_back(this);
 }
+
+SingletonBase::~SingletonBase() = default;
 
 void SingletonBase::detachSingleton() {
     SingletonList::getInstance()->erase(position_);

@@ -14,18 +14,17 @@ namespace ec {
 /// \brief Container that can contain handler and deletes it
 /// when call destructor.
 ////////////////////////////////////////////////////////////
-class UniqueContainer {
+class UniqueContainer : protected MtListBase<HandlerBase*> {
  protected:
-    using Container = std::list<HandlerBase*>;
-    using Position  = typename Container::iterator;
+    using Self = UniqueContainer;
+    using Base = MtListBase<HandlerBase*>;
 
-    std::recursive_mutex lock_;
-    Container resource_;
+    using Position  = typename Base::Position;
 
  public:
-    UniqueContainer()                       = default;
-    UniqueContainer(const UniqueContainer&) = delete;
-    UniqueContainer(UniqueContainer&&);
+    UniqueContainer();
+    UniqueContainer(const Self&) = delete;
+    UniqueContainer(Self&&);
     ~UniqueContainer();
 
     Position push(HandlerBase* handler);
@@ -39,33 +38,33 @@ class UniqueContainer {
 ////////////////////////////////////////////////////////////
 
 template <typename Data>
-std::list<HandlerBase*>::iterator asyncHandler(
-    ObsObjectBase<Handler<Data>>* container, std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new AsyncFuncHandler(function);
-    return handler->attachTo(container);
+typename HandlerList<Data>::Position asyncHandler(
+    HandlerList<Data>* container, std::function<void(const Data&)>&& function) {
+    Handler<Data>* handler = new AsyncFuncHandler<Data>(std::move(function));
+    return container->attach(handler);
 }
 
 template <typename Data>
-std::list<HandlerBase*>::iterator asyncHandler(
-    ObsObjectBase<Handler<Data>>* container, std::list<HandlerBase*>::iterator position,
-    std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new AsyncFuncHandler(function);
-    return handler->attachTo(position, container);
+typename HandlerList<Data>::Position asyncHandler(
+    HandlerList<Data>* container, std::list<HandlerBase*>::iterator position,
+    std::function<void(const Data&)>&& function) {
+    Handler<Data>* handler = new AsyncFuncHandler<Data>(std::move(function));
+    return container->attach(handler);
 }
 
 template <typename Data>
-std::list<HandlerBase*>::iterator syncHandler(
-    ObsObjectBase<Handler<Data>>* container, std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new SyncFuncHandler(function);
-    return handler->attachTo(container);
+typename HandlerList<Data>::Position syncHandler(
+    HandlerList<Data>* container, std::function<void(const Data&)>&& function) {
+    Handler<Data>* handler = new SyncFuncHandler<Data>(std::move(function));
+    return container->attach(handler);
 }
 
 template <typename Data>
-std::list<HandlerBase*>::iterator syncHandler(
-    ObsObjectBase<Handler<Data>>* container, std::list<HandlerBase*>::iterator position,
-    std::function<void(const Data&)> function) {
-    Handler<Data>* handler = new SyncFuncHandler(function);
-    return handler->attachTo(position, container);
+typename HandlerList<Data>::Position syncHandler(
+    HandlerList<Data>* container, std::list<HandlerBase*>::iterator position,
+    std::function<void(const Data&)>&& function) {
+    Handler<Data>* handler = new SyncFuncHandler<Data>(std::move(function));
+    return container->attach(handler);
 }
 
 }  // namespace ec
