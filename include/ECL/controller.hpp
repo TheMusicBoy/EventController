@@ -1,9 +1,9 @@
-#ifndef _TMBEL_CONTROLLER_HPP_
-#define _TMBEL_CONTROLLER_HPP_
+#ifndef _ECL_CONTROLLER_HPP_
+#define _ECL_CONTROLLER_HPP_
 
-#include <TMBEL/event_queue.hpp>
-#include <TMBEL/handler.hpp>
-#include <TMBEL/utils.hpp>
+#include <ECL/event_queue.hpp>
+#include <ECL/handler.hpp>
+#include <ECL/utils.hpp>
 #include <list>
 #include <mutex>
 

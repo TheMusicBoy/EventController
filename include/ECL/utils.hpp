@@ -1,8 +1,8 @@
-#ifndef _TMBEL_UTILS_HPP_
-#define _TMBEL_UTILS_HPP_
+#ifndef _ECL_UTILS_HPP_
+#define _ECL_UTILS_HPP_
 
-#include <TMBEL/global_container.hpp>
-#include <TMBEL/handler.hpp>
+#include <ECL/ts_list.hpp>
+#include <ECL/handler.hpp>
 #include <list>
 #include <mutex>
 
@@ -14,10 +14,10 @@ namespace ec {
 /// \brief Container that can contain handler and deletes it
 /// when call destructor.
 ////////////////////////////////////////////////////////////
-class UniqueContainer : protected MtListBase<HandlerBase*> {
+class UniqueContainer : protected TsList<HandlerBase*> {
  protected:
     using Self = UniqueContainer;
-    using Base = MtListBase<HandlerBase*>;
+    using Base = TsList<HandlerBase*>;
 
     using Position  = typename Base::Position;
 

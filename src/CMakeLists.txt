@@ -1,15 +1,15 @@
-set(INCROOT ${PROJECT_SOURCE_DIR}/include/TMBEL/)
+set(INCROOT ${PROJECT_SOURCE_DIR}/include/ECL/)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/)
 
 set(SRC
 # Global file
-    ${PROJECT_SOURCE_DIR}/include/TMBEL.hpp
+    ${PROJECT_SOURCE_DIR}/include/ECL.hpp
 
 # Files
     ${INCROOT}/singleton.hpp
     ${SRCROOT}/singleton.cpp
-    ${INCROOT}/multithread_list.hpp
-    ${SRCROOT}/multithread_list.cpp
+    ${INCROOT}/ts_list.hpp
+    ${INCROOT}/observer.hpp
     ${INCROOT}/lock_handler.hpp
     ${SRCROOT}/lock_handler.cpp
     ${INCROOT}/process_list.hpp
@@ -20,11 +20,11 @@ set(SRC
     ${SRCROOT}/utils.cpp
     ${INCROOT}/event_queue.hpp
     ${INCROOT}/controller.hpp
-    ${INCROOT}/global_container.hpp
+    ${INCROOT}/event_bus_container.hpp
 )
 
-add_library(tmbel ${SRC})
+add_library(ecl ${SRC})
 
-target_include_directories(tmbel PUBLIC ${PROJECT_SOURCE_DIR}/include/)
+target_include_directories(ecl PUBLIC ${PROJECT_SOURCE_DIR}/include/)
 
-set_target_properties(tmbel PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(ecl PROPERTIES LINKER_LANGUAGE CXX)

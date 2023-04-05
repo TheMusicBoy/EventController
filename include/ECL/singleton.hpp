@@ -1,7 +1,7 @@
-#ifndef _TMBEL_SINGLETON_HPP_
-#define _TMBEL_SINGLETON_HPP_
+#ifndef _ECL_SINGLETON_HPP_
+#define _ECL_SINGLETON_HPP_
 
-#include <TMBEL/multithread_list.hpp>
+#include <ECL/ts_list.hpp>
 
 namespace ec {
     
@@ -11,10 +11,10 @@ namespace ec {
 
 class SingletonBase;
 
-class SingletonList : public MtListBase<SingletonBase*> {
+class SingletonList : public TsList<SingletonBase*> {
  protected:
     using Self = SingletonList;
-    using Base = MtListBase<SingletonBase*>;
+    using Base = TsList<SingletonBase*>;
 
     SingletonList();
 
