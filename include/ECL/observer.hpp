@@ -4,7 +4,7 @@
 #include <ECL/ts_list.hpp>
 
 namespace ec {
-    
+
 template <typename SubType>
 class SubObjectBase {
  protected:
@@ -29,21 +29,29 @@ class SubObjectBase {
 
     Position attachTo(Container* container) {
         detach();
-        container_       = container;
-        return position_ = container_->push_back(static_cast<SubType*>(this));
+        container_ = container;
+        position_  = container_->push_back(static_cast<SubType*>(this));
+        onAttach();
+        return position_;
     }
+
     Position attachTo(Position position, Container* container) {
         detach();
         container_ = container;
-        return position_ =
-                   container_->insert(position, static_cast<SubType*>(this));
+        position_  = container_->insert(position, static_cast<SubType*>(this));
+        onAttach();
+        return position_;
     }
     void detach() {
         if (container_ != nullptr) {
             container_->erase(position_);
             container_ = nullptr;
         }
+        onDetach();
     }
+
+    virtual void onAttach() {}
+    virtual void onDetach() {}
 
     bool isAttached() const { return container_ != nullptr; }
 };
@@ -79,7 +87,7 @@ class ObsObjectBase {
         return object->attachTo(position, &sub_list_);
     }
 };
-    
-} // namespace ec
+
+}  // namespace ec
 
 #endif
