@@ -253,6 +253,10 @@ class Future : public std::future<Result> {
     }
 };
 
+////////////////////////////////////////////////////////////
+/// \brief DO NOT USE THIS FUNCTION.
+/// IT'S NOT FINISHED FOR PRODUCT.
+////////////////////////////////////////////////////////////
 template <typename Callable, typename... Args>
 Future<decltype(std::declval<Callable>()(std::declval<Args>()...))>&& async(
     Callable&& callable, Args&&... args) {
@@ -271,6 +275,10 @@ Future<decltype(std::declval<Callable>()(std::declval<Args>()...))>&& async(
     return std::move(result);
 }
 
+////////////////////////////////////////////////////////////
+/// \brief DO NOT USE THIS FUNCTION.
+/// IT'S NOT FINISHED FOR PRODUCT.
+////////////////////////////////////////////////////////////
 template <typename Callable, typename... Args>
 Future<decltype(std::declval<Callable>()(std::declval<Args>()...))>&& async(
     uint32_t group_id, Callable&& callable, Args&&... args) {
@@ -289,6 +297,10 @@ Future<decltype(std::declval<Callable>()(std::declval<Args>()...))>&& async(
     return std::move(result);
 }
 
+////////////////////////////////////////////////////////////
+/// \brief DO NOT USE THIS FUNCTION.
+/// IT'S NOT FINISHED FOR PRODUCT.
+////////////////////////////////////////////////////////////
 template <typename Callable, typename... Args>
 Future<decltype(std::declval<Callable>()(std::declval<Args>()...))>&& async(
     uint32_t group_id, uint32_t priority, Callable&& callable, Args&&... args) {
