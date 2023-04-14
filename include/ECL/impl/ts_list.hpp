@@ -70,6 +70,16 @@ class TsList {
         return resource_.begin();
     }
 
+    void pop_back() {
+        std::lock_guard lock(lock_);
+        resource_.pop_back();
+    }
+
+    void pop_front() {
+        std::lock_guard lock(lock_);
+        resource_.pop_front();
+    }
+
     Position insert(Position position, const value_type& object) {
         std::lock_guard lock(lock_);
         return resource_.insert(position, object);
@@ -93,6 +103,26 @@ class TsList {
         std::lock_guard lock(lock_);
         resource_.emplace_front(std::move(args...));
         return resource_.begin();
+    }
+
+    value_type& front() {
+        std::lock_guard lock(lock_);
+        return resource_.front();
+    }
+
+    value_type& back() {
+        std::lock_guard lock(lock_);
+        return resource_.back();
+    }
+
+    const value_type& front() const {
+        std::lock_guard lock(lock_);
+        return resource_.front();
+    }
+
+    const value_type& back() const {
+        std::lock_guard lock(lock_);
+        return resource_.back();
     }
 
     void erase(Position position) {

@@ -1,8 +1,8 @@
 #ifndef _ECL_LOCK_HANDLER_HPP_
 #define _ECL_LOCK_HANDLER_HPP_
 
-#include <ECL/observer.hpp>
-#include <ECL/singleton.hpp>
+#include <ECL/impl/observer.hpp>
+#include <ECL/impl/singleton.hpp>
 #include <mutex>
 
 namespace ec {

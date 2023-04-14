@@ -1,7 +1,7 @@
 #ifndef _ECL_EVENT_QUEUE_HPP_
 #define _ECL_EVENT_QUEUE_HPP_
 
-#include <ECL/ts_list.hpp>
+#include <ECL/impl/ts_list.hpp>
 #include <list>
 #include <mutex>
 

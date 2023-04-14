@@ -6,12 +6,14 @@ set(SRC
     ${PROJECT_SOURCE_DIR}/include/ECL.hpp
 
 # Files
-    ${INCROOT}/singleton.hpp
-    ${SRCROOT}/singleton.cpp
-    ${INCROOT}/ts_list.hpp
-    ${INCROOT}/observer.hpp
-    ${INCROOT}/lock_handler.hpp
-    ${SRCROOT}/lock_handler.cpp
+    ${INCROOT}/impl/thread.hpp
+    ${SRCROOT}/impl/thread.cpp
+    ${INCROOT}/impl/singleton.hpp
+    ${SRCROOT}/impl/singleton.cpp
+    ${INCROOT}/impl/ts_list.hpp
+    ${INCROOT}/impl/observer.hpp
+    ${INCROOT}/impl/lock_handler.hpp
+    ${SRCROOT}/impl/lock_handler.cpp
     ${INCROOT}/process_list.hpp
     ${SRCROOT}/process_list.cpp
     ${INCROOT}/handler.hpp

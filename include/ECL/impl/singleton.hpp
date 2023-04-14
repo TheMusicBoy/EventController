@@ -1,7 +1,7 @@
 #ifndef _ECL_SINGLETON_HPP_
 #define _ECL_SINGLETON_HPP_
 
-#include <ECL/ts_list.hpp>
+#include <ECL/impl/ts_list.hpp>
 
 namespace ec {
     

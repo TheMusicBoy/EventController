@@ -1,4 +1,4 @@
-#include <ECL/singleton.hpp>
+#include <ECL/impl/singleton.hpp>
 
 namespace ec {
 

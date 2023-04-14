@@ -1,7 +1,7 @@
 #ifndef _ECL_UTILS_HPP_
 #define _ECL_UTILS_HPP_
 
-#include <ECL/ts_list.hpp>
+#include <ECL/impl/ts_list.hpp>
 #include <ECL/handler.hpp>
 #include <list>
 #include <mutex>

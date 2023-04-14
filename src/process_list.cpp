@@ -26,7 +26,7 @@ Mutex ProcessList::getMutex() const { return global_lock_; }
 
 void ProcessList::clear() {
     std::lock_guard lock(lock_);
-    resource_.map([](std::thread& el) { el.join(); });
+    resource_.map([](Thread& el) { el.join(); });
     resource_.clear();
 }
 

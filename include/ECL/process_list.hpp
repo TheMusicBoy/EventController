@@ -1,15 +1,15 @@
 #ifndef _ECL_PROCESS_LIST_HPP_
 #define _ECL_PROCESS_LIST_HPP_
 
-#include <ECL/lock_handler.hpp>
-#include <ECL/ts_list.hpp>
-#include <thread>
+#include <ECL/impl/lock_handler.hpp>
+#include <ECL/impl/ts_list.hpp>
+#include <ECL/impl/thread.hpp>
 
 namespace ec {
 
 class ProcessList {
  protected:
-    using Container = TsList<std::thread>;
+    using Container = TsList<Thread>;
 
     Container resource_;
     mutable std::recursive_mutex lock_;

@@ -1,8 +1,8 @@
 #ifndef _ECL_HANDLER_HPP_
 #define _ECL_HANDLER_HPP_
 
-#include <ECL/lock_handler.hpp>
-#include <ECL/observer.hpp>
+#include <ECL/impl/lock_handler.hpp>
+#include <ECL/impl/observer.hpp>
 #include <ECL/process_list.hpp>
 #include <functional>
 #include <list>

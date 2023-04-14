@@ -1,4 +1,4 @@
-#include <ECL/lock_handler.hpp>
+#include <ECL/impl/lock_handler.hpp>
 
 namespace ec {
 
